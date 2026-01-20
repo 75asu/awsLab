@@ -1,3 +1,6 @@
+# AWS + Terraform Practice Projects
+
+
 ## Project 1 — Terraform AWS Bootstrap + “Hello Infra” Workload
 
 ### Workload
@@ -224,3 +227,7 @@ A one-pager called: **“Production Readiness Notes”**
 * key alarms
 * key runbooks (“High 5xx”, “DB connections exhausted”)
 * cost levers (NAT, log retention, instance sizing)
+
+Interview angle
+
+“I think like an owner: reliability + cost + operability.”
