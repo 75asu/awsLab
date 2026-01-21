@@ -45,6 +45,13 @@ jobs:
           terraform apply -auto-approve
           echo "bucket_name=$(terraform output -raw state_bucket)" >> $GITHUB_OUTPUT
           echo "lock_table=$(terraform output -raw state_lock_table)" >> $GITHUB_OUTPUT
+      
+      - name: Verify Bucket Creation
+        run: |
+          cd terraform-iam-manager/bootstrap
+          terraform output
+          echo "Waiting 30 seconds for AWS propagation..."
+          sleep 30
 
   deploy-iam:
     needs: bootstrap-state
@@ -59,17 +66,48 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Wait for S3 bucket propagation
+      
+      - name: Debug - Check Outputs
         run: |
-          echo "Waiting for S3 bucket to be fully created..."
-          sleep 30  # Wait 30 seconds for AWS propagation
+          echo "Bucket name: ${{ needs.bootstrap-state.outputs.bucket_name }}"
+          echo "Lock table: ${{ needs.bootstrap-state.outputs.lock_table }}"
+      
+      - name: Wait for S3 bucket
+        run: |
+          BUCKET="${{ needs.bootstrap-state.outputs.bucket_name }}"
+          echo "Waiting for S3 bucket: $BUCKET"
+          
+          for i in {1..30}; do
+            if aws s3 ls s3://$BUCKET 2>/dev/null; then
+              echo "✅ S3 bucket is ready (attempt $i)"
+              break
+            else
+              echo "Attempt $i: Bucket not ready, waiting 10 seconds..."
+              sleep 10
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "❌ ERROR: S3 bucket still not accessible after 300 seconds"
+              echo "Available buckets:"
+              aws s3 ls
+              exit 1
+            fi
+          done
+      
       - name: Update Backend Config
         run: |
           cd terraform-iam-manager/environments/dev
+          echo "Before update:"
+          cat backend.tf
           sed -i "s/YOUR-BUCKET-NAME/${{ needs.bootstrap-state.outputs.bucket_name }}/" backend.tf
           sed -i "s/YOUR-LOCK-TABLE/${{ needs.bootstrap-state.outputs.lock_table }}/" backend.tf
+          echo "After update:"
+          cat backend.tf
+      
       - name: Deploy IAM
         run: |
           cd terraform-iam-manager/environments/dev
+          echo "Initializing Terraform..."
           terraform init
+          echo "Applying Terraform..."
           terraform apply -auto-approve
