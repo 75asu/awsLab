@@ -7,7 +7,22 @@ env:
   TF_VERSION: 1.5.0
 
 jobs:
+  conditional-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Cleanup if exists
+        run: |
+          cd terraform-iam-manager
+          ./scripts/cleanup.sh dev
+
   bootstrap-state:
+    needs: conditional-cleanup
     runs-on: ubuntu-latest
     outputs:
       bucket_name: ${{ steps.bootstrap.outputs.bucket_name }}
@@ -25,7 +40,7 @@ jobs:
       - name: Bootstrap State
         id: bootstrap
         run: |
-          cd terraform-iam-manager/bootstrap  # FIXED PATH
+          cd terraform-iam-manager/bootstrap
           terraform init
           terraform apply -auto-approve
           echo "bucket_name=$(terraform output -raw state_bucket)" >> $GITHUB_OUTPUT
