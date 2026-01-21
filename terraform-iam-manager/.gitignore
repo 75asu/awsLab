@@ -1,0 +1,25 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+
+# Environment files
+environments/*/terraform.tfvars
+environments/*/outputs.json
+
+# Sensitive files
+*.env
+*.pem
+*.key
+secrets/
+credentials/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
