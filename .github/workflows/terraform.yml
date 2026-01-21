@@ -8,8 +8,6 @@ env:
 
 jobs:
   bootstrap-state:
-    # Remove the if condition or update it to include workflow_dispatch
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       bucket_name: ${{ steps.bootstrap.outputs.bucket_name }}
@@ -27,7 +25,7 @@ jobs:
       - name: Bootstrap State
         id: bootstrap
         run: |
-          cd bootstrap
+          cd terraform-iam-manager/bootstrap  # FIXED PATH
           terraform init
           terraform apply -auto-approve
           echo "bucket_name=$(terraform output -raw state_bucket)" >> $GITHUB_OUTPUT
@@ -48,11 +46,11 @@ jobs:
           aws-region: us-east-1
       - name: Update Backend Config
         run: |
-          cd environments/dev
+          cd terraform-iam-manager/environments/dev
           sed -i "s/YOUR-BUCKET-NAME/${{ needs.bootstrap-state.outputs.bucket_name }}/" backend.tf
           sed -i "s/YOUR-LOCK-TABLE/${{ needs.bootstrap-state.outputs.lock_table }}/" backend.tf
       - name: Deploy IAM
         run: |
-          cd environments/dev
+          cd terraform-iam-manager/environments/dev
           terraform init
           terraform apply -auto-approve
