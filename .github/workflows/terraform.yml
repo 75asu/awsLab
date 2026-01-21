@@ -59,6 +59,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Wait for S3 bucket propagation
+        run: |
+          echo "Waiting for S3 bucket to be fully created..."
+          sleep 30  # Wait 30 seconds for AWS propagation
       - name: Update Backend Config
         run: |
           cd terraform-iam-manager/environments/dev
