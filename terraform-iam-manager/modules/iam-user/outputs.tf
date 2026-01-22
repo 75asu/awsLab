@@ -15,3 +15,8 @@ output "secret_access_key" {
   value       = aws_iam_access_key.this.secret
   sensitive   = true
 }
+
+output "secret_arn" {
+  description = "ARN of the secret in Secrets Manager"
+  value       = try(aws_secretsmanager_secret.this[0].arn, null)
+}

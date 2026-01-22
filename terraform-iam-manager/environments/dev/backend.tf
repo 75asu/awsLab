@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = "{{S3_BUCKET}}"
-    key            = "iam/dev.tfstate"
+    bucket         = "tfstate-trading-platform-dev"
+    key            = "iam-manager/dev/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "{{DYNAMODB_TABLE}}"
+    dynamodb_table = "tfstate-lock-trading-platform-dev"
     encrypt        = true
   }
 }

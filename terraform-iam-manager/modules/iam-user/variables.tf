@@ -21,3 +21,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "create_secret" {
+  description = "Whether to create a secret in Secrets Manager with the user's access keys"
+  type        = bool
+  default     = false
+}

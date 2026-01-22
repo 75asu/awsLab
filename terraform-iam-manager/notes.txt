@@ -1,62 +1,13 @@
+  Step 1: Bootstrap
+   1 terraform -chdir=terraform-iam-manager/bootstrap apply -auto-approve
 
-cat > .github/workflows/terraform.yml << 'EOF'
-name: Terraform
+  Step 2: IAM Manager
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+   1 terraform -chdir=terraform-iam-manager/environments/dev apply -auto-approve
 
-env:
-  TF_VERSION: 1.5.0
+  Step 3: Foundation
+   1 terraform -chdir=terraform-foundation/environments/dev apply -auto-approve
 
-jobs:
-  bootstrap-state:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    outputs:
-      bucket_name: ${{ steps.bootstrap.outputs.bucket_name }}
-      lock_table: ${{ steps.bootstrap.outputs.lock_table }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Bootstrap State
-        id: bootstrap
-        run: |
-          cd bootstrap
-          terraform init
-          terraform apply -auto-approve
-          echo "bucket_name=$(terraform output -raw state_bucket)" >> $GITHUB_OUTPUT
-          echo "lock_table=$(terraform output -raw state_lock_table)" >> $GITHUB_OUTPUT
 
-  deploy-iam:
-    needs: bootstrap-state
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Update Backend Config
-        run: |
-          cd environments/dev
-          sed -i "s/YOUR-BUCKET-NAME/${{ needs.bootstrap-state.outputs.bucket_name }}/" backend.tf
-          sed -i "s/YOUR-LOCK-TABLE/${{ needs.bootstrap-state.outputs.lock_table }}/" backend.tf
-      - name: Deploy IAM
-        run: |
-          cd environments/dev
-          terraform init
-          terraform apply -auto-approve
-EOF
+
+   aws secretsmanager delete-secret --secret-id ci-cd-dev --force-delete-without-recovery --region us-east-1

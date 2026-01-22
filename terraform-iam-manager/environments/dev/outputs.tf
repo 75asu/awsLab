@@ -21,3 +21,8 @@ output "ci_cd_secret_access_key" {
   value       = module.ci_cd_user.secret_access_key
   sensitive   = true
 }
+
+output "ci_cd_secret_arn" {
+  description = "ARN of the secret in Secrets Manager for the CI/CD user"
+  value       = module.ci_cd_user.secret_arn
+}

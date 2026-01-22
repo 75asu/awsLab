@@ -25,13 +25,17 @@ module "terraform_admin" {
 module "ci_cd_user" {
   source = "../../modules/iam-user"
   
-  user_name = "ci-cd-dev"
-  path      = "/service/"
+  user_name     = "ci-cd-dev"
+  path          = "/service/"
+  create_secret = true
   
   policy_arns = [
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
     "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
     "arn:aws:iam::aws:policy/AWSCloudFormationReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+    "arn:aws:iam::aws:policy/IAMFullAccess"
   ]
   
   tags = {

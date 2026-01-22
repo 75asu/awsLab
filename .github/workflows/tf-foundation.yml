@@ -1,0 +1,29 @@
+name: Terraform Foundation
+
+on:
+  workflow_dispatch:
+
+env:
+  TF_VERSION: 1.5.0
+
+jobs:
+  deploy-foundation:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      
+      - name: Terraform Init & Apply
+        run: |
+          cd terraform-foundation/environments/dev
+          terraform init
+          terraform apply -auto-approve

@@ -1,10 +1,7 @@
 # modules/state-management/main.tf
-resource "random_pet" "bucket_suffix" {
-  length = 2
-}
-
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "${var.bucket_prefix}-${random_pet.bucket_suffix.id}"
+  bucket = var.bucket_prefix
+  force_destroy = true
   
   tags = merge(var.tags, {
     Name = "Terraform State Bucket"

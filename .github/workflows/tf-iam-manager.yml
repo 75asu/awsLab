@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: Terraform IAM Manager
 
 on:
   workflow_dispatch:
@@ -9,12 +9,14 @@ env:
 jobs:
   conditional-cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
       - name: Cleanup if exists
         run: |
@@ -24,6 +26,9 @@ jobs:
   bootstrap-state:
     needs: conditional-cleanup
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     outputs:
       bucket_name: ${{ steps.bootstrap.outputs.bucket_name }}
       lock_table: ${{ steps.bootstrap.outputs.lock_table }}
@@ -34,8 +39,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
       - name: Bootstrap State
         id: bootstrap
@@ -49,6 +53,9 @@ jobs:
   deploy-iam:
     needs: bootstrap-state
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -56,20 +63,8 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-      
-      - name: Update Backend Config
-        run: |
-          cd terraform-iam-manager/environments/dev
-          sed -i "s|{{S3_BUCKET}}|${{ needs.bootstrap-state.outputs.bucket_name }}|g" backend.tf
-          sed -i "s|{{DYNAMODB_TABLE}}|${{ needs.bootstrap-state.outputs.lock_table }}|g" backend.tf
-          echo "Updated config:"
-          cat backend.tf
-      
-      - name: Wait for propagation
-        run: sleep 45
       
       - name: Deploy IAM
         run: |
