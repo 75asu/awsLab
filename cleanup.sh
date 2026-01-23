@@ -5,8 +5,13 @@
 
 set -e
 
+echo "Destroying terraform-core-services..."
+cd terraform-core-services/environments/dev
+terraform init -reconfigure || true # Allow init to fail if backend is gone
+terraform destroy -auto-approve -lock=false
+
 echo "Destroying terraform-foundation..."
-cd terraform-foundation/environments/dev
+cd ../../../terraform-foundation/environments/dev
 terraform init -reconfigure || true # Allow init to fail if backend is gone
 terraform destroy -auto-approve -lock=false
 
