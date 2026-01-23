@@ -30,12 +30,14 @@ module "ci_cd_user" {
   create_secret = true
   
   policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
-    "arn:aws:iam::aws:policy/AWSCloudFormationReadOnlyAccess",
-    "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
-    "arn:aws:iam::aws:policy/IAMFullAccess"
+    "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
+    "arn:aws:iam::aws:policy/IAMFullAccess",
+    "arn:aws:iam::aws:policy/AmazonECS_FullAccess",
+    "arn:aws:iam::aws:policy/AmazonKinesisFullAccess",
+    "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
+    "arn:aws:iam::aws:policy/AutoScalingFullAccess"
   ]
   
   tags = {
