@@ -36,3 +36,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 .aws-credentials
+
+coding-practice-platform/scoring-api/node_modules

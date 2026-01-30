@@ -1,0 +1,30 @@
+services:
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: piston
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "2000:2000"
+    tmpfs:
+      - /piston/jobs:exec,size=256m
+
+  scoring-api:
+    build: ./scoring-api
+    container_name: scoring-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PISTON_URL=http://piston:2000
+    depends_on:
+      - piston
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - scoring-api

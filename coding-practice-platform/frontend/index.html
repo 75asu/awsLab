@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coding Practice Platform</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #00d9ff; margin-bottom: 20px; }
+    .panel {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .question-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .question-btn {
+      padding: 10px 20px;
+      background: #0f3460;
+      border: 2px solid #00d9ff;
+      color: #00d9ff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .question-btn:hover, .question-btn.active {
+      background: #00d9ff;
+      color: #1a1a2e;
+    }
+    .description {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .sample-tests {
+      background: #0a0a1a;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .sample-tests h3 { color: #00d9ff; margin-bottom: 10px; }
+    .test-case {
+      background: #16213e;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-family: monospace;
+    }
+    .test-case pre { white-space: pre-wrap; }
+    .editor-section { display: flex; gap: 20px; flex-wrap: wrap; }
+    .editor-panel { flex: 1; min-width: 300px; }
+    .results-panel { flex: 1; min-width: 300px; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    select, input {
+      padding: 8px 12px;
+      background: #0f3460;
+      border: 1px solid #00d9ff;
+      color: #eee;
+      border-radius: 5px;
+    }
+    textarea {
+      width: 100%;
+      height: 300px;
+      background: #0a0a1a;
+      color: #00ff88;
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+    .btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .btn-run { background: #00d9ff; color: #1a1a2e; }
+    .btn-submit { background: #00ff88; color: #1a1a2e; }
+    .btn:hover { transform: scale(1.05); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .results {
+      background: #0a0a1a;
+      padding: 15px;
+      border-radius: 5px;
+      min-height: 200px;
+      font-family: monospace;
+    }
+    .result-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .result-pass { background: #0d4d0d; border-left: 4px solid #00ff88; }
+    .result-fail { background: #4d0d0d; border-left: 4px solid #ff4444; }
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .score-high { background: #0d4d0d; color: #00ff88; }
+    .score-mid { background: #4d4d0d; color: #ffff44; }
+    .score-low { background: #4d0d0d; color: #ff4444; }
+    .loading { text-align: center; color: #00d9ff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Coding Practice Platform</h1>
+
+    <div class="panel">
+      <h3 style="color: #00d9ff; margin-bottom: 15px;">Select a Problem:</h3>
+      <div class="question-select" id="questionButtons"><span style="color: #888;">Loading...</span></div>
+      <div class="description" id="description">Select a question to begin</div>
+      <div class="sample-tests" id="sampleTests"></div>
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-panel panel">
+        <div class="controls">
+          <select id="language">
+            <option value="71">Python 3</option>
+            <option value="63">JavaScript (Node.js)</option>
+            <option value="50">C (GCC 10)</option>
+            <option value="54">C++ (GCC 10)</option>
+            <option value="62">Java 15</option>
+          </select>
+          <input type="text" id="userId" placeholder="Your ID (optional)">
+          <button class="btn btn-run" onclick="runCode()">Run</button>
+          <button class="btn btn-submit" onclick="submitCode()">Submit</button>
+        </div>
+        <textarea id="code" placeholder="Write your code here..."></textarea>
+      </div>
+
+      <div class="results-panel panel">
+        <h3 style="color: #00d9ff; margin-bottom: 15px;">Results</h3>
+        <div class="results" id="results">Run your code to see results</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto-detect API URL - handles VS Code proxy and direct access
+    const API_URL = window.location.href.includes('/proxy/')
+      ? window.location.href.replace('/proxy/3000/', '/proxy/3001/').replace(/\/$/, '')
+      : `http://${window.location.hostname}:3001`;
+
+    let questions = [];
+    let currentQuestion = null;
+
+    async function loadQuestions() {
+      const container = document.getElementById('questionButtons');
+      container.innerHTML = '<span style="color: #00d9ff;">Loading questions...</span>';
+
+      try {
+        const res = await fetch(`${API_URL}/coding/questions`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        questions = await res.json();
+
+        if (questions.length === 0) {
+          container.innerHTML = '<span style="color: #ffaa00;">No questions available.</span>';
+          return;
+        }
+
+        renderQuestionButtons();
+        selectQuestion(questions[0].id);
+      } catch (e) {
+        console.error('Failed to load questions:', e);
+        container.innerHTML = '';
+        document.getElementById('description').innerHTML =
+          `<span style="color: #ff4444;">Error loading questions: ${e.message}<br><br>
+          Make sure the Scoring API is running on port 3001.<br>
+          API URL: ${API_URL}</span>`;
+      }
+    }
+
+    function renderQuestionButtons() {
+      const container = document.getElementById('questionButtons');
+      container.innerHTML = questions.map(q =>
+        `<button class="question-btn" data-id="${q.id}" onclick="selectQuestion('${q.id}')">${q.title}</button>`
+      ).join('');
+    }
+
+    function selectQuestion(id) {
+      currentQuestion = questions.find(q => q.id === id);
+      document.querySelectorAll('.question-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.id === id);
+      });
+      document.getElementById('description').innerHTML = `<h3>${currentQuestion.title}</h3><p style="margin-top:10px">${currentQuestion.description}</p>`;
+
+      const testsHtml = currentQuestion.sampleTests.map((t, i) => `
+        <div class="test-case">
+          <strong>Test ${i + 1}:</strong>
+          <pre>Input: ${t.input}</pre>
+          <pre>Expected: ${t.expected}</pre>
+        </div>
+      `).join('');
+      document.getElementById('sampleTests').innerHTML = `<h3>Sample Tests</h3>${testsHtml}`;
+      document.getElementById('results').innerHTML = 'Run your code to see results';
+    }
+
+    async function runCode() {
+      if (!currentQuestion) return alert('Select a question first');
+      const code = document.getElementById('code').value;
+      const languageId = parseInt(document.getElementById('language').value);
+
+      document.getElementById('results').innerHTML = '<div class="loading">Running tests...</div>';
+
+      try {
+        const res = await fetch(`${API_URL}/coding/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId: currentQuestion.id, code, languageId })
+        });
+        const data = await res.json();
+        renderResults(data.testResults);
+      } catch (e) {
+        document.getElementById('results').innerHTML = `<span style="color: #ff4444;">Error: ${e.message}</span>`;
+      }
+    }
+
+    async function submitCode() {
+      if (!currentQuestion) return alert('Select a question first');
+      const code = document.getElementById('code').value;
+      const languageId = parseInt(document.getElementById('language').value);
+      const userId = document.getElementById('userId').value || 'anonymous';
+
+      document.getElementById('results').innerHTML = '<div class="loading">Submitting and grading...</div>';
+
+      try {
+        const res = await fetch(`${API_URL}/coding/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId: currentQuestion.id, code, languageId, userId })
+        });
+        const data = await res.json();
+        renderScore(data);
+      } catch (e) {
+        document.getElementById('results').innerHTML = `<span style="color: #ff4444;">Error: ${e.message}</span>`;
+      }
+    }
+
+    function renderResults(testResults) {
+      const html = testResults.map((r, i) => `
+        <div class="result-item ${r.passed ? 'result-pass' : 'result-fail'}">
+          <strong>Test ${i + 1}: ${r.passed ? 'PASSED' : 'FAILED'}</strong>
+          <pre>Input: ${r.input}</pre>
+          <pre>Expected: ${r.expected}</pre>
+          <pre>Actual: ${r.actual || '(no output)'}</pre>
+          ${r.error ? `<pre style="color: #ff4444;">Error: ${r.error}</pre>` : ''}
+        </div>
+      `).join('');
+      document.getElementById('results').innerHTML = html;
+    }
+
+    function renderScore(data) {
+      const scoreClass = data.score >= 80 ? 'score-high' : data.score >= 50 ? 'score-mid' : 'score-low';
+      document.getElementById('results').innerHTML = `
+        <div class="score ${scoreClass}">
+          Score: ${data.score}%<br>
+          <small>(${data.passed}/${data.total} hidden tests passed)</small>
+        </div>
+        <p style="text-align: center; color: #888;">Hidden test details are not shown to prevent cheating.</p>
+      `;
+    }
+
+    loadQuestions();
+  </script>
+</body>
+</html>
