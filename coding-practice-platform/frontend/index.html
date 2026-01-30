@@ -114,6 +114,15 @@
       gap: 8px;
       flex-wrap: wrap;
     }
+    .name-input {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      color: #cbd5f5;
+      font-size: 12px;
+      min-width: 180px;
+    }
     .layout {
       display: grid;
       grid-template-columns: minmax(320px, 40%) 1fr;
@@ -381,6 +390,149 @@
       display: grid;
       gap: 10px;
     }
+    .tools-layout {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 12px;
+      align-items: start;
+    }
+    .tools-panel {
+      display: grid;
+      gap: 10px;
+      position: sticky;
+      top: 10px;
+      align-self: start;
+    }
+    .tool-card {
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      background: #0f1520;
+      padding: 10px;
+    }
+    .tool-card.draggable {
+      position: relative;
+    }
+    .tool-card.draggable.floating {
+      position: fixed;
+      z-index: 40;
+      width: 240px;
+      cursor: default;
+      box-shadow: var(--shadow);
+    }
+    .tool-drag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      cursor: move;
+      user-select: none;
+    }
+    .tool-title {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .notepad {
+      width: 100%;
+      min-height: 180px;
+      background: #0b0f14;
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      resize: vertical;
+    }
+    .tool-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+    .calc-display {
+      width: 100%;
+      padding: 8px 10px;
+      background: #0b0f14;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .calc-btn {
+      padding: 8px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      color: #e2e8f0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .calc-btn.accent {
+      border-color: rgba(255, 161, 22, 0.5);
+      color: #ffd59c;
+    }
+    .question-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .question-body {
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      background: #0f1520;
+      margin-bottom: 10px;
+    }
+    .question-title {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+    .q-nav {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin: 10px 0 4px;
+      align-items: center;
+    }
+    .q-nav .btn {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .palette-btn {
+      padding: 6px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: #0b0f14;
+      color: #cbd5f5;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .palette-btn.unseen { background: #0b0f14; color: #64748b; }
+    .palette-btn.seen { background: #3b0a0a; color: #fecaca; border-color: rgba(239, 68, 68, 0.4); }
+    .palette-btn.answered { background: #0b3b1d; color: #bbf7d0; border-color: rgba(34, 197, 94, 0.4); }
+    .palette-btn.active { outline: 2px solid rgba(255, 161, 22, 0.6); }
     .mcq-card {
       border: 1px solid rgba(148, 163, 184, 0.15);
       border-radius: 12px;
@@ -491,6 +643,8 @@
       .problem-panel { min-height: auto; }
       .workspace-panel { min-height: auto; }
       .controls { grid-template-columns: 1fr 1fr; }
+      .tools-layout { grid-template-columns: 1fr; }
+      .tools-panel { position: static; }
     }
     @media (max-width: 720px) {
       .header { flex-direction: column; align-items: flex-start; }
@@ -509,21 +663,17 @@
           <p>Exam-ready problem sets with instant scoring</p>
         </div>
       </div>
-      <div class="header-meta">
-        <div class="pill">Prep</div>
-        <div class="pill">Scoring</div>
-        <div class="pill">Secure</div>
-      </div>
     </header>
 
     <div class="exam-bar">
       <div class="tabs" id="sectionTabs">
-        <button class="tab active" data-section="programming">Programming</button>
+        <button class="tab active" data-section="verbal">Verbal</button>
         <button class="tab" data-section="reasoning">Reasoning</button>
         <button class="tab" data-section="numerical">Numerical</button>
-        <button class="tab" data-section="verbal">Verbal</button>
+        <button class="tab" data-section="programming">Programming</button>
       </div>
       <div class="timers">
+        <input class="name-input" id="studentName" placeholder="Student name" readonly>
         <div class="timer" title="Section time remaining">
           ⏳ <strong id="sectionTimer">30:00</strong>
         </div>
@@ -532,10 +682,10 @@
         </div>
         <div class="scoreboard">
           <span>Scores</span>
-          <span class="score-pill" id="score-programming">P -</span>
+          <span class="score-pill" id="score-verbal">V -</span>
           <span class="score-pill" id="score-reasoning">R -</span>
           <span class="score-pill" id="score-numerical">N -</span>
-          <span class="score-pill" id="score-verbal">V -</span>
+          <span class="score-pill" id="score-programming">P -</span>
         </div>
       </div>
     </div>
@@ -593,9 +743,50 @@
     <section class="section" id="section-reasoning">
       <div class="panel">
         <div class="section-label"><span class="icon">R</span><span>Reasoning</span></div>
-        <div class="mcq-list" id="reasoningQuestions"></div>
-        <div class="mcq-actions">
-          <button class="btn btn-submit" onclick="submitSection('reasoning')">Submit Section</button>
+        <div class="tools-layout">
+          <div>
+            <div class="mcq-list" id="reasoningQuestions"></div>
+          </div>
+          <div class="tools-panel">
+            <div class="tool-card">
+              <div class="tool-title">Questions</div>
+              <div class="palette" id="reasoningPalette"></div>
+            </div>
+            <div class="tool-card">
+              <div class="tool-title">Notepad</div>
+              <textarea class="notepad" data-notepad placeholder="Type rough work..."></textarea>
+              <div class="tool-actions">
+                <button class="btn btn-run" onclick="clearNotepad()">Clear</button>
+              </div>
+            </div>
+            <div class="tool-card draggable" id="calcTool">
+              <div class="tool-drag">Calculator <span>drag</span></div>
+              <input class="calc-display" value="0" readonly>
+              <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn accent" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn accent" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn accent" onclick="calcInput('-')">−</button>
+                <button class="calc-btn" onclick="calcInput('0')">0</button>
+                <button class="calc-btn" onclick="calcInput('.')">.</button>
+                <button class="calc-btn" onclick="calcBack()">⌫</button>
+                <button class="calc-btn accent" onclick="calcInput('+')">+</button>
+                <button class="calc-btn" onclick="calcPercent()">%</button>
+                <button class="calc-btn" onclick="calcSqrt()">√</button>
+                <button class="calc-btn" onclick="calcNegate()">+/-</button>
+                <button class="calc-btn" onclick="calcClear()">C</button>
+                <button class="calc-btn accent" style="grid-column: span 4;" onclick="calcEquals()">=</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -603,9 +794,50 @@
     <section class="section" id="section-numerical">
       <div class="panel">
         <div class="section-label"><span class="icon">N</span><span>Numerical</span></div>
-        <div class="mcq-list" id="numericalQuestions"></div>
-        <div class="mcq-actions">
-          <button class="btn btn-submit" onclick="submitSection('numerical')">Submit Section</button>
+        <div class="tools-layout">
+          <div>
+            <div class="mcq-list" id="numericalQuestions"></div>
+          </div>
+          <div class="tools-panel">
+            <div class="tool-card">
+              <div class="tool-title">Questions</div>
+              <div class="palette" id="numericalPalette"></div>
+            </div>
+            <div class="tool-card">
+              <div class="tool-title">Notepad</div>
+              <textarea class="notepad" data-notepad placeholder="Type rough work..."></textarea>
+              <div class="tool-actions">
+                <button class="btn btn-run" onclick="clearNotepad()">Clear</button>
+              </div>
+            </div>
+            <div class="tool-card draggable" id="calcTool2">
+              <div class="tool-drag">Calculator <span>drag</span></div>
+              <input class="calc-display" value="0" readonly>
+              <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn accent" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn accent" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn accent" onclick="calcInput('-')">−</button>
+                <button class="calc-btn" onclick="calcInput('0')">0</button>
+                <button class="calc-btn" onclick="calcInput('.')">.</button>
+                <button class="calc-btn" onclick="calcBack()">⌫</button>
+                <button class="calc-btn accent" onclick="calcInput('+')">+</button>
+                <button class="calc-btn" onclick="calcPercent()">%</button>
+                <button class="calc-btn" onclick="calcSqrt()">√</button>
+                <button class="calc-btn" onclick="calcNegate()">+/-</button>
+                <button class="calc-btn" onclick="calcClear()">C</button>
+                <button class="calc-btn accent" style="grid-column: span 4;" onclick="calcEquals()">=</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -613,9 +845,50 @@
     <section class="section" id="section-verbal">
       <div class="panel">
         <div class="section-label"><span class="icon">V</span><span>Verbal</span></div>
-        <div class="mcq-list" id="verbalQuestions"></div>
-        <div class="mcq-actions">
-          <button class="btn btn-submit" onclick="submitSection('verbal')">Submit Section</button>
+        <div class="tools-layout">
+          <div>
+            <div class="mcq-list" id="verbalQuestions"></div>
+          </div>
+          <div class="tools-panel">
+            <div class="tool-card">
+              <div class="tool-title">Questions</div>
+              <div class="palette" id="verbalPalette"></div>
+            </div>
+            <div class="tool-card">
+              <div class="tool-title">Notepad</div>
+              <textarea class="notepad" data-notepad placeholder="Type rough work..."></textarea>
+              <div class="tool-actions">
+                <button class="btn btn-run" onclick="clearNotepad()">Clear</button>
+              </div>
+            </div>
+            <div class="tool-card draggable" id="calcTool3">
+              <div class="tool-drag">Calculator <span>drag</span></div>
+              <input class="calc-display" value="0" readonly>
+              <div class="calc-grid">
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn accent" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn accent" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn accent" onclick="calcInput('-')">−</button>
+                <button class="calc-btn" onclick="calcInput('0')">0</button>
+                <button class="calc-btn" onclick="calcInput('.')">.</button>
+                <button class="calc-btn" onclick="calcBack()">⌫</button>
+                <button class="calc-btn accent" onclick="calcInput('+')">+</button>
+                <button class="calc-btn" onclick="calcPercent()">%</button>
+                <button class="calc-btn" onclick="calcSqrt()">√</button>
+                <button class="calc-btn" onclick="calcNegate()">+/-</button>
+                <button class="calc-btn" onclick="calcClear()">C</button>
+                <button class="calc-btn accent" style="grid-column: span 4;" onclick="calcEquals()">=</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -625,14 +898,13 @@
         <div class="summary-header">
           <div>
             <div class="problem-title">Exam Summary</div>
-            <div class="problem-meta">Review your section performance</div>
+            <div class="problem-meta">Student: <span id="summaryName">—</span></div>
           </div>
-          <div class="timer">Final Score</div>
+          <div class="timer">Total: <strong id="summaryTotal">—</strong></div>
         </div>
         <div class="summary-grid" id="summaryGrid"></div>
         <div class="summary-actions">
-          <button class="btn btn-run" onclick="resetExam()">Start Again</button>
-          <button class="btn btn-submit" onclick="goHome()">Home</button>
+          <button class="btn btn-run" data-keep-enabled="true" onclick="resetExam()">Start Again</button>
         </div>
       </div>
     </section>
@@ -656,9 +928,10 @@
 
     let questions = [];
     let currentQuestion = null;
+    let nameLocked = false;
     const SECTION_SECONDS = 30 * 60;
     const TOTAL_SECONDS = 120 * 60;
-    const SECTIONS = ['programming', 'reasoning', 'numerical', 'verbal'];
+    const SECTIONS = ['verbal', 'reasoning', 'numerical', 'programming'];
     let currentSectionIndex = 0;
     let examStart = null;
     let examEnd = null;
@@ -687,6 +960,11 @@
       numerical: null,
       verbal: null
     };
+    const sectionState = {
+      verbal: { current: 0, status: [] },
+      reasoning: { current: 0, status: [] },
+      numerical: { current: 0, status: [] }
+    };
 
     let sectionQuestions = {};
 
@@ -704,8 +982,10 @@
           return;
         }
 
+        shuffleQuestions(questions);
         renderQuestionButtons();
-        selectQuestion(questions[0].id);
+        const pick = questions[Math.floor(Math.random() * questions.length)];
+        selectQuestion(pick.id);
       } catch (e) {
         console.error('Failed to load questions:', e);
         select.innerHTML = '';
@@ -722,6 +1002,13 @@
         `<option value="${q.id}">${q.title}</option>`
       ).join('');
       select.onchange = (e) => selectQuestion(e.target.value);
+    }
+
+    function shuffleQuestions(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
     }
 
     function selectQuestion(id) {
@@ -816,6 +1103,7 @@
       });
       document.querySelectorAll('input, textarea, select, button').forEach(el => {
         if (['modalClose'].includes(el.id)) return;
+        if (el.dataset && el.dataset.keepEnabled === 'true') return;
         if (!el.id || !['sectionTabs'].includes(el.id)) el.disabled = true;
       });
       hideModal();
@@ -825,28 +1113,99 @@
     function renderMCQ(sectionId, containerId) {
       const container = document.getElementById(containerId);
       const questions = sectionQuestions[sectionId] || [];
-      container.innerHTML = questions.map((q, idx) => {
-        const opts = q.options.map((opt, i) => `
+      if (!sectionState[sectionId]) return;
+      if (sectionState[sectionId].status.length === 0) {
+        sectionState[sectionId].status = questions.map(() => 'unseen');
+      }
+      renderSectionQuestion(sectionId);
+      renderPalette(sectionId);
+    }
+
+    function renderSectionQuestion(sectionId) {
+      const container = document.getElementById(`${sectionId}Questions`);
+      const questions = sectionQuestions[sectionId] || [];
+      if (!questions.length) {
+        container.innerHTML = '<div class="mcq-q" style="color:#94a3b8;">No questions available.</div>';
+        return;
+      }
+      const idx = sectionState[sectionId].current;
+      const q = questions[idx];
+      if (sectionState[sectionId].status[idx] === 'unseen') {
+        sectionState[sectionId].status[idx] = 'seen';
+      }
+
+      const opts = q.options.map((opt, i) => {
+        const checked = sectionAnswers[sectionId][q.id] === (i + 1) ? 'checked' : '';
+        return `
           <label>
-            <input type="radio" name="${sectionId}-${q.id}" value="${i + 1}">
+            <input type="radio" name="${sectionId}-${q.id}" value="${i + 1}" ${checked} onchange="markAnswered('${sectionId}', '${q.id}', ${i + 1})">
             ${opt}
           </label>
-        `).join('');
-        return `
-          <div class="mcq-card">
-            <div class="mcq-q">${idx + 1}. ${q.q}</div>
-            <div class="mcq-options">${opts}</div>
-          </div>
         `;
       }).join('');
+
+      container.innerHTML = `
+        <div class="question-header">
+          <span>Question ${idx + 1} of ${questions.length}</span>
+          <span>${sectionId.toUpperCase()}</span>
+        </div>
+        <div class="question-body">
+          <div class="question-title">${q.q}</div>
+          <div class="mcq-options">${opts}</div>
+        </div>
+        <div class="q-nav">
+          <button class="btn btn-run" onclick="prevQuestion('${sectionId}')" ${idx === 0 ? 'disabled' : ''}>◀ Prev</button>
+          <button class="btn btn-run" onclick="nextQuestion('${sectionId}')" ${idx === questions.length - 1 ? 'disabled' : ''}>Next ▶</button>
+          <button class="btn btn-submit" onclick="submitSection('${sectionId}')">✓ Submit</button>
+        </div>
+      `;
+      renderPalette(sectionId);
+    }
+
+    function markAnswered(sectionId, qid, value) {
+      sectionAnswers[sectionId][qid] = value;
+      const idx = (sectionQuestions[sectionId] || []).findIndex(q => q.id === qid);
+      if (idx >= 0) sectionState[sectionId].status[idx] = 'answered';
+      renderPalette(sectionId);
+    }
+
+    function nextQuestion(sectionId) {
+      const questions = sectionQuestions[sectionId] || [];
+      if (sectionState[sectionId].current < questions.length - 1) {
+        sectionState[sectionId].current += 1;
+        renderSectionQuestion(sectionId);
+      }
+    }
+
+    function prevQuestion(sectionId) {
+      if (sectionState[sectionId].current > 0) {
+        sectionState[sectionId].current -= 1;
+        renderSectionQuestion(sectionId);
+      }
+    }
+
+    function goToQuestion(sectionId, index) {
+      sectionState[sectionId].current = index;
+      renderSectionQuestion(sectionId);
+    }
+
+    function renderPalette(sectionId) {
+      const palette = document.getElementById(`${sectionId}Palette`);
+      if (!palette) return;
+      const status = sectionState[sectionId].status;
+      palette.innerHTML = status.map((state, i) => `
+        <button class="palette-btn ${state} ${i === sectionState[sectionId].current ? 'active' : ''}" onclick="goToQuestion('${sectionId}', ${i})">${i + 1}</button>
+      `).join('');
     }
 
     function submitSection(sectionId, silent = false, noAdvance = false) {
       if (sectionSubmitted[sectionId]) return;
+      const userId = getStudentName();
       const questions = sectionQuestions[sectionId] || [];
       questions.forEach(q => {
-        const selected = document.querySelector(`input[name="${sectionId}-${q.id}"]:checked`);
-        sectionAnswers[sectionId][q.id] = selected ? parseInt(selected.value) : null;
+        if (sectionAnswers[sectionId][q.id] === undefined) {
+          sectionAnswers[sectionId][q.id] = null;
+        }
       });
       sectionSubmitted[sectionId] = true;
       const inputs = document.querySelectorAll(`#section-${sectionId} input[type="radio"]`);
@@ -855,7 +1214,7 @@
       fetch(`${API_URL}/exam/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sectionId, answers: sectionAnswers[sectionId], userId: 'anonymous' })
+        body: JSON.stringify({ sectionId, answers: sectionAnswers[sectionId], userId })
       })
         .then(res => res.json())
         .then(data => {
@@ -900,7 +1259,7 @@
       sectionSubmitted.programming = true;
       const code = document.getElementById('code').value;
       const languageId = parseInt(document.getElementById('language').value);
-      const userId = 'anonymous';
+      const userId = getStudentName();
 
       document.getElementById('results').innerHTML = '<div class="loading">Submitting and grading...</div>';
 
@@ -927,8 +1286,122 @@
       modal.classList.add('active');
     }
 
+    function getStudentName() {
+      const name = document.getElementById('studentName')?.value?.trim();
+      return name || 'Anonymous';
+    }
+
+    function enforceStudentName() {
+      nameLocked = true;
+      showModal('Enter Student Name', 'Please enter your name to start the exam.');
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div style="margin-top:8px;">
+          <input id="nameInput" class="name-input" placeholder="Full name">
+        </div>
+      `;
+      const closeBtn = document.getElementById('modalClose');
+      closeBtn.textContent = 'Start Exam';
+      closeBtn.onclick = () => {
+        const name = document.getElementById('nameInput').value.trim();
+        if (!name) return;
+        document.getElementById('studentName').value = name;
+        document.getElementById('studentName').setAttribute('readonly', 'readonly');
+        nameLocked = false;
+        hideModal();
+        closeBtn.textContent = 'Close';
+        closeBtn.onclick = hideModal;
+        startExam();
+      };
+    }
+
     function hideModal() {
+      if (nameLocked) return;
       document.getElementById('modal').classList.remove('active');
+    }
+
+    function initNotepad() {
+      const saved = localStorage.getItem('examNotepad') || '';
+      document.querySelectorAll('[data-notepad]').forEach(el => {
+        el.value = saved;
+        el.addEventListener('input', () => {
+          localStorage.setItem('examNotepad', el.value);
+          syncNotepad(el.value, el);
+        });
+      });
+    }
+
+    function syncNotepad(value, source) {
+      document.querySelectorAll('[data-notepad]').forEach(el => {
+        if (el !== source) el.value = value;
+      });
+    }
+
+    function clearNotepad() {
+      localStorage.removeItem('examNotepad');
+      syncNotepad('', null);
+      document.querySelectorAll('[data-notepad]').forEach(el => { el.value = ''; });
+    }
+
+    let calcValue = '0';
+    function calcRender() {
+      document.querySelectorAll('.calc-display').forEach(el => { el.value = calcValue; });
+    }
+    function calcInput(val) {
+      if (calcValue === '0' && '0123456789'.includes(val)) {
+        calcValue = val;
+      } else {
+        calcValue += val;
+      }
+      calcRender();
+    }
+    function calcPercent() {
+      try {
+        const sanitized = calcValue.replace(/[^0-9.+\-*/()]/g, '');
+        const result = Function(`"use strict"; return (${sanitized});`)();
+        calcValue = String(result / 100);
+      } catch {
+        calcValue = 'Error';
+      }
+      calcRender();
+    }
+    function calcSqrt() {
+      try {
+        const sanitized = calcValue.replace(/[^0-9.+\-*/()]/g, '');
+        const result = Function(`"use strict"; return (${sanitized});`)();
+        calcValue = result < 0 ? 'Error' : String(Math.sqrt(result));
+      } catch {
+        calcValue = 'Error';
+      }
+      calcRender();
+    }
+    function calcNegate() {
+      try {
+        const sanitized = calcValue.replace(/[^0-9.+\-*/()]/g, '');
+        const result = Function(`"use strict"; return (${sanitized});`)();
+        calcValue = String(result * -1);
+      } catch {
+        calcValue = 'Error';
+      }
+      calcRender();
+    }
+    function calcClear() {
+      calcValue = '0';
+      calcRender();
+    }
+    function calcBack() {
+      calcValue = calcValue.length > 1 ? calcValue.slice(0, -1) : '0';
+      calcRender();
+    }
+    function calcEquals() {
+      try {
+        const sanitized = calcValue.replace(/[^0-9.+\-*/()]/g, '');
+        const result = Function(`"use strict"; return (${sanitized});`)();
+        calcValue = String(result);
+      } catch {
+        calcValue = 'Error';
+      }
+      calcRender();
     }
 
     function renderResults(testResults) {
@@ -1008,6 +1481,8 @@
       const sumScore = totalScores.length ? totalScores.reduce((a, b) => a + b, 0) : null;
       const elapsedSeconds = Math.floor(((examEnd || Date.now()) - (examStart || Date.now())) / 1000);
       const timeTaken = formatTime(elapsedSeconds);
+      document.getElementById('summaryName').textContent = getStudentName();
+      document.getElementById('summaryTotal').textContent = sumScore !== null ? `${sumScore} / 400` : '—';
       grid.innerHTML = `
         ${cards}
         <div class="summary-card">
@@ -1059,10 +1534,44 @@
 
     loadQuestions();
     initSections();
-    startExam();
-    document.getElementById('modalClose').addEventListener('click', hideModal);
+    initNotepad();
+    enforceStudentName();
     document.getElementById('modal').addEventListener('click', (e) => {
+      if (nameLocked) return;
       if (e.target.id === 'modal') hideModal();
+    });
+
+    function makeDraggable(el) {
+      const handle = el.querySelector('.tool-drag');
+      if (!handle) return;
+      let offsetX = 0;
+      let offsetY = 0;
+      let dragging = false;
+
+      handle.addEventListener('mousedown', (e) => {
+        dragging = true;
+        el.classList.add('floating');
+        const rect = el.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const x = Math.max(10, e.clientX - offsetX);
+        const y = Math.max(10, e.clientY - offsetY);
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        dragging = false;
+      });
+    }
+
+    ['calcTool', 'calcTool2', 'calcTool3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) makeDraggable(el);
     });
   </script>
 </body>

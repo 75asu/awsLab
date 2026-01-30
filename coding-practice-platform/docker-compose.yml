@@ -17,6 +17,7 @@ services:
       - "3001:3001"
     environment:
       - PISTON_URL=http://piston:2000
+      - HOST=0.0.0.0
     depends_on:
       - piston
 
