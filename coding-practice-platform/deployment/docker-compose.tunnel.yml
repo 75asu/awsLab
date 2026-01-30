@@ -1,0 +1,41 @@
+name: ${PROJECT_NAME}
+
+services:
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: ${PROJECT_NAME}-piston
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "${PISTON_PORT}:2000"
+    tmpfs:
+      - /piston/jobs:exec,size=256m
+
+  scoring-api:
+    build: ../scoring-api
+    container_name: ${PROJECT_NAME}-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT}:3001"
+    environment:
+      - PISTON_URL=http://piston:2000
+      - HOST=0.0.0.0
+    depends_on:
+      - piston
+
+  frontend:
+    build: ../frontend
+    container_name: ${PROJECT_NAME}-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    depends_on:
+      - scoring-api
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: ${PROJECT_NAME}-tunnel
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    command: tunnel --no-autoupdate --url http://frontend:3000

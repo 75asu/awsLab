@@ -1,4 +1,4 @@
-.PHONY: start stop restart logs status install clean
+.PHONY: start stop restart logs status install clean prod-up prod-down prod-logs prod-reset tunnel-up tunnel-down tunnel-logs
 
 # Start all services
 start: start-piston start-api start-frontend
@@ -29,6 +29,41 @@ stop:
 
 # Restart all services
 restart: stop start
+
+# Production (Docker)
+prod-up:
+	@echo "Starting Docker stack..."
+	@docker compose up -d --build
+	@echo "✓ Docker stack up (frontend: http://localhost:3000)"
+
+prod-down:
+	@docker compose down
+	@echo "✓ Docker stack stopped"
+
+prod-logs:
+	@docker compose logs -f
+
+prod-reset:
+	@docker compose down
+	@docker compose up -d --build
+	@echo "✓ Docker stack rebuilt and started"
+
+# Public tunnel (Docker only)
+tunnel-up:
+	@echo "Starting Cloudflare tunnel..."
+	@cd deployment && cp -n env.example .env >/dev/null 2>&1 || true
+	@cd deployment && sed -i 's|EXISTING_NETWORK=.*|EXISTING_NETWORK=coding-practice-platform_default|' .env
+	@cd deployment && sed -i 's|ORIGIN_URL=.*|ORIGIN_URL=http://frontend:3000|' .env
+	@cd deployment && docker rm -f coding-practice-tunnel >/dev/null 2>&1 || true
+	@cd deployment && docker compose -f docker-compose.tunnel-only.yml --env-file .env up -d
+	@echo "✓ Tunnel started. Run: make tunnel-logs"
+
+tunnel-down:
+	@cd deployment && docker compose -f docker-compose.tunnel-only.yml --env-file .env down
+	@echo "✓ Tunnel stopped"
+
+tunnel-logs:
+	@cd deployment && docker compose -f docker-compose.tunnel-only.yml --env-file .env logs -f tunnel
 
 # View logs
 logs:

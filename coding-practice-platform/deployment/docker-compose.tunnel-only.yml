@@ -1,0 +1,17 @@
+name: ${PROJECT_NAME}-tunnel
+
+services:
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: ${PROJECT_NAME}-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url ${ORIGIN_URL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - existing
+
+networks:
+  existing:
+    external: true
+    name: ${EXISTING_NETWORK}

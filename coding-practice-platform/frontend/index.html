@@ -923,8 +923,10 @@
   <script>
     // Auto-detect API URL - handles VS Code proxy and direct access
     const API_URL = window.location.href.includes('/proxy/')
-      ? window.location.href.replace('/proxy/3000/', '/proxy/3001/').replace(/\/$/, '')
-      : `http://${window.location.hostname}:3001`;
+      ? window.location.href.replace('/proxy/3000/', '/proxy/3000/api').replace(/\/$/, '')
+      : (window.location.hostname === 'localhost' && window.location.port === '3000')
+        ? 'http://localhost:3001'
+        : `${window.location.origin}/api`;
 
     let questions = [];
     let currentQuestion = null;

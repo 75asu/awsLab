@@ -27,11 +27,21 @@ cd ..
 ## Running
 
 ```bash
-# From coding-practice-platform directory
-make start    # Start all services
-make stop     # Stop all services
-make status   # Check service status
-make restart  # Restart all services
+# Dev (host processes)
+make start
+make stop
+make status
+make restart
+
+# Prod (Docker)
+make prod-up
+make prod-down
+make prod-logs
+
+# Public URL (Cloudflare Tunnel)
+make tunnel-up
+make tunnel-logs
+make tunnel-down
 ```
 
 ## Access
