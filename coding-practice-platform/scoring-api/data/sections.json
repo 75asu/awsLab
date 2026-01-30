@@ -1,0 +1,104 @@
+{
+  "sections": [
+    {
+      "id": "reasoning",
+      "title": "Reasoning",
+      "questions": [
+        {
+          "id": "r1",
+          "q": "All pens are tools. All tools are useful. Which statement must be true?",
+          "options": [
+            "Some pens are not useful",
+            "All pens are useful",
+            "Some tools are pens",
+            "All useful things are pens"
+          ],
+          "answer": 2
+        },
+        {
+          "id": "r2",
+          "q": "Find the next number in the series: 2, 6, 12, 20, 30, ?",
+          "options": ["36", "40", "42", "44"],
+          "answer": 3
+        },
+        {
+          "id": "r3",
+          "q": "A is B's brother. C is B's mother. D is C's father. What is A to D?",
+          "options": ["Grandson", "Nephew", "Son", "Cousin"],
+          "answer": 1
+        },
+        {
+          "id": "r4",
+          "q": "If 5 machines take 5 minutes to make 5 items, how long for 100 machines to make 100 items?",
+          "options": ["5 minutes", "10 minutes", "20 minutes", "100 minutes"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": "numerical",
+      "title": "Numerical",
+      "questions": [
+        {
+          "id": "n1",
+          "q": "A shop gives a 20% discount on a Rs 1500 item. What is the selling price?",
+          "options": ["Rs 1100", "Rs 1200", "Rs 1300", "Rs 1400"],
+          "answer": 2
+        },
+        {
+          "id": "n2",
+          "q": "Two numbers are in the ratio 3:5 and their sum is 64. What is the larger number?",
+          "options": ["36", "40", "44", "48"],
+          "answer": 2
+        },
+        {
+          "id": "n3",
+          "q": "A train travels 180 km in 3 hours. What is its speed?",
+          "options": ["50 km/h", "55 km/h", "60 km/h", "65 km/h"],
+          "answer": 3
+        },
+        {
+          "id": "n4",
+          "q": "Simple interest on Rs 2000 at 5% for 3 years is:",
+          "options": ["Rs 200", "Rs 250", "Rs 300", "Rs 350"],
+          "answer": 3
+        }
+      ]
+    },
+    {
+      "id": "verbal",
+      "title": "Verbal",
+      "questions": [
+        {
+          "id": "v1",
+          "q": "Choose the word most similar to 'Concise'.",
+          "options": ["Lengthy", "Brief", "Random", "Hidden"],
+          "answer": 2
+        },
+        {
+          "id": "v2",
+          "q": "Choose the correct sentence.",
+          "options": [
+            "She don't like coffee.",
+            "She doesn't likes coffee.",
+            "She doesn't like coffee.",
+            "She don't likes coffee."
+          ],
+          "answer": 3
+        },
+        {
+          "id": "v3",
+          "q": "Antonym of 'Scarce' is:",
+          "options": ["Plentiful", "Rare", "Faint", "Weak"],
+          "answer": 1
+        },
+        {
+          "id": "v4",
+          "q": "Choose the correct meaning of 'ubiquitous'.",
+          "options": ["Rare", "Everywhere", "Silent", "Unknown"],
+          "answer": 2
+        }
+      ]
+    }
+  ]
+}

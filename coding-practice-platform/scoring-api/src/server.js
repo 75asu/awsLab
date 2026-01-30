@@ -10,7 +10,9 @@ app.use(cors());
 app.use(express.json());
 
 const questions = JSON.parse(readFileSync(join(__dirname, '../data/questions.json'), 'utf-8'));
+const examSections = JSON.parse(readFileSync(join(__dirname, '../data/sections.json'), 'utf-8'));
 const results = {};
+const sectionResults = {};
 const PISTON_URL = process.env.PISTON_URL || 'http://localhost:2000';
 
 // Language mapping: frontend languageId -> Piston language name
@@ -82,6 +84,41 @@ app.get('/coding/questions', (req, res) => {
   res.json(safe);
 });
 
+// List exam sections (without answers)
+app.get('/exam/sections', (req, res) => {
+  const safe = examSections.sections.map(section => ({
+    id: section.id,
+    title: section.title,
+    questions: section.questions.map(q => ({
+      id: q.id,
+      q: q.q,
+      options: q.options
+    }))
+  }));
+  res.json(safe);
+});
+
+// Submit a section for scoring
+app.post('/exam/submit', (req, res) => {
+  const { sectionId, answers, userId } = req.body;
+  const section = examSections.sections.find(s => s.id === sectionId);
+  if (!section) return res.status(404).json({ error: 'Section not found' });
+
+  let correct = 0;
+  const total = section.questions.length;
+  section.questions.forEach(q => {
+    const selected = answers?.[q.id];
+    if (selected && parseInt(selected, 10) === q.answer) correct++;
+  });
+  const score = Math.round((correct / total) * 100);
+
+  if (userId) {
+    if (!sectionResults[userId]) sectionResults[userId] = {};
+    sectionResults[userId][sectionId] = { score, correct, total, timestamp: new Date() };
+  }
+  res.json({ score, correct, total });
+});
+
 // Run sample tests only
 app.post('/coding/run', async (req, res) => {
   const { questionId, code, languageId } = req.body;
@@ -130,4 +167,5 @@ app.get('/results/:userId', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Scoring API running on http://localhost:${PORT} (using Piston)`));
+const HOST = process.env.HOST || '127.0.0.1';
+app.listen(PORT, HOST, () => console.log(`Scoring API running on http://${HOST}:${PORT} (using Piston)`));

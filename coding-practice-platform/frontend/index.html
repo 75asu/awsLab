@@ -5,144 +5,569 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coding Practice Platform</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+      --bg: #0b0f14;
+      --bg-elev: #121822;
+      --panel: #161d29;
+      --panel-soft: #1c2432;
+      --border: #263246;
+      --text: #e6edf3;
+      --muted: #94a3b8;
+      --accent: #ffa116;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --shadow: 0 20px 40px rgba(2, 6, 23, 0.45);
+      --radius: 14px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
+      font-family: 'Space Grotesk', sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, #172033 0%, transparent 60%),
+        radial-gradient(1200px 800px at 100% 0%, #1e1a10 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      padding: 20px;
     }
-    .container { max-width: 1200px; margin: 0 auto; }
-    h1 { color: #00d9ff; margin-bottom: 20px; }
-    .panel {
-      background: #16213e;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
+    .page {
+      padding: 10px 16px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
-    .question-select {
+    .header {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      box-shadow: none;
+      margin-bottom: 10px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-badge { display: none; }
+    .brand h1 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .brand p {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    .header-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .exam-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
+    }
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .tab {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+    .tab.active {
+      color: #fff3db;
+      border-color: rgba(255, 161, 22, 0.6);
+      background: linear-gradient(135deg, rgba(255, 161, 22, 0.2), rgba(34, 197, 94, 0.08));
+    }
+    .tab.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .timers {
+      display: inline-flex;
+      gap: 8px;
       flex-wrap: wrap;
     }
-    .question-btn {
-      padding: 10px 20px;
-      background: #0f3460;
-      border: 2px solid #00d9ff;
-      color: #00d9ff;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s;
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 40%) 1fr;
+      gap: 12px;
     }
-    .question-btn:hover, .question-btn.active {
-      background: #00d9ff;
-      color: #1a1a2e;
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 12px;
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+    .problem-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: calc(100vh - 120px);
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .section-label .icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 161, 22, 0.15);
+      color: #ffd59c;
+      border: 1px solid rgba(255, 161, 22, 0.4);
+    }
+    .question-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.9), rgba(12, 16, 24, 0.95));
+      border: 1px solid rgba(255, 161, 22, 0.35);
+      color: var(--text);
+      border-radius: 12px;
+      font-size: 12px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.7) 50%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.7) 50%, transparent 50%),
+        linear-gradient(90deg, rgba(255, 161, 22, 0.15), rgba(255, 161, 22, 0.02));
+      background-position:
+        calc(100% - 18px) 55%,
+        calc(100% - 12px) 55%,
+        0 0;
+      background-size: 6px 6px, 6px 6px, 100% 100%;
+      background-repeat: no-repeat;
+    }
+    .question-select:focus {
+      outline: none;
+      border-color: rgba(255, 161, 22, 0.7);
+      box-shadow: 0 0 0 2px rgba(255, 161, 22, 0.2);
+    }
+    .workspace-panel {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      min-height: calc(100vh - 120px);
+    }
+    .problem-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .problem-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .problem-meta {
+      color: var(--muted);
+      font-size: 10px;
     }
     .description {
-      background: #0f3460;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
+      background: var(--panel-soft);
+      padding: 12px;
+      border-radius: 12px;
       line-height: 1.6;
+      color: #d5dde7;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      font-size: 13px;
+    }
+    .description h3 {
+      font-size: 15px;
+      margin-bottom: 6px;
     }
     .sample-tests {
-      background: #0a0a1a;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 20px;
+      background: var(--bg-elev);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
     }
-    .sample-tests h3 { color: #00d9ff; margin-bottom: 10px; }
+    .sample-tests details > summary {
+      cursor: pointer;
+      list-style: none;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+    .sample-tests details > summary::-webkit-details-marker { display: none; }
+    .sample-tests details > summary::after {
+      content: '▾';
+      margin-left: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .sample-tests details[open] > summary::after { content: '▴'; }
     .test-case {
-      background: #16213e;
-      padding: 10px;
-      border-radius: 5px;
+      background: #0c111a;
+      padding: 12px;
+      border-radius: 10px;
       margin-bottom: 10px;
-      font-family: monospace;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      border: 1px solid rgba(34, 197, 94, 0.12);
     }
-    .test-case pre { white-space: pre-wrap; }
-    .editor-section { display: flex; gap: 20px; flex-wrap: wrap; }
-    .editor-panel { flex: 1; min-width: 300px; }
-    .results-panel { flex: 1; min-width: 300px; }
+    .test-case pre { white-space: pre-wrap; color: #b6c2d0; }
+    .results-panel {
+      background: var(--bg-elev);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .editor-panel { display: flex; flex-direction: column; gap: 12px; }
     .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr auto auto;
+      gap: 8px;
       align-items: center;
     }
     select, input {
-      padding: 8px 12px;
-      background: #0f3460;
-      border: 1px solid #00d9ff;
-      color: #eee;
-      border-radius: 5px;
+      padding: 8px 10px;
+      background: #0f1520;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 12px;
     }
     textarea {
       width: 100%;
-      height: 300px;
-      background: #0a0a1a;
-      color: #00ff88;
-      border: 1px solid #333;
-      border-radius: 5px;
-      padding: 15px;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
+      height: 480px;
+      background: #0b0f14;
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
       resize: vertical;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     }
     .btn {
-      padding: 10px 25px;
+      padding: 8px 16px;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .btn-run { background: #00d9ff; color: #1a1a2e; }
-    .btn-submit { background: #00ff88; color: #1a1a2e; }
-    .btn:hover { transform: scale(1.05); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-run {
+      background: rgba(255, 161, 22, 0.15);
+      border: 1px solid rgba(255, 161, 22, 0.6);
+      color: #ffe3b5;
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #04230f;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
     .results {
-      background: #0a0a1a;
-      padding: 15px;
-      border-radius: 5px;
-      min-height: 200px;
-      font-family: monospace;
+      background: #0b0f14;
+      padding: 12px;
+      border-radius: 12px;
+      min-height: 240px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      border: 1px solid var(--border);
     }
     .result-item {
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 10px;
-      border-radius: 5px;
+      border-radius: 10px;
+      border: 1px solid transparent;
     }
-    .result-pass { background: #0d4d0d; border-left: 4px solid #00ff88; }
-    .result-fail { background: #4d0d0d; border-left: 4px solid #ff4444; }
+    .result-pass { background: rgba(34, 197, 94, 0.12); border-color: rgba(34, 197, 94, 0.5); }
+    .result-fail { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.5); }
     .score {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 22px;
+      font-weight: 600;
       text-align: center;
-      padding: 20px;
-      border-radius: 5px;
+      padding: 18px;
+      border-radius: 12px;
       margin-bottom: 15px;
+      border: 1px solid transparent;
     }
-    .score-high { background: #0d4d0d; color: #00ff88; }
-    .score-mid { background: #4d4d0d; color: #ffff44; }
-    .score-low { background: #4d0d0d; color: #ff4444; }
-    .loading { text-align: center; color: #00d9ff; }
+    .score-high { background: rgba(34, 197, 94, 0.12); color: #7ce8a6; border-color: rgba(34, 197, 94, 0.5); }
+    .score-mid { background: rgba(255, 161, 22, 0.15); color: #ffd59c; border-color: rgba(255, 161, 22, 0.5); }
+    .score-low { background: rgba(239, 68, 68, 0.12); color: #ff9a9a; border-color: rgba(239, 68, 68, 0.5); }
+    .loading { text-align: center; color: var(--accent); }
+    .results-panel h3 {
+      margin-bottom: 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    .timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      font-size: 11px;
+      color: #cbd5f5;
+      justify-self: end;
+    }
+    .timer strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #ffe3b5;
+    }
+    .scoreboard {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .score-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.6);
+      color: #cbd5f5;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .section.hidden {
+      display: none !important;
+    }
+    .mcq-list {
+      display: grid;
+      gap: 10px;
+    }
+    .mcq-card {
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+      background: #0f1520;
+    }
+    .mcq-q {
+      font-size: 13px;
+      color: #d5dde7;
+      margin-bottom: 8px;
+    }
+    .mcq-options label {
+      display: block;
+      font-size: 12px;
+      color: #cbd5f5;
+      margin-bottom: 8px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: rgba(15, 23, 42, 0.4);
+    }
+    .mcq-options label:hover {
+      border-color: rgba(255, 161, 22, 0.35);
+    }
+    .mcq-options input[type="radio"] {
+      margin-right: 8px;
+      transform: translateY(1px);
+    }
+    .mcq-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 10, 16, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+    }
+    .modal.active { display: flex; }
+    .modal-card {
+      width: min(520px, 92vw);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .modal-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .modal-body {
+      font-size: 13px;
+      color: #cbd5f5;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .summary-page {
+      display: none;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .summary-page.active {
+      display: block;
+    }
+    .summary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .summary-card {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: #0f1520;
+      color: #cbd5f5;
+      font-size: 13px;
+    }
+    .summary-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .problem-panel { min-height: auto; }
+      .workspace-panel { min-height: auto; }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .header { flex-direction: column; align-items: flex-start; }
+      .controls { grid-template-columns: 1fr; }
+      .page { padding: 20px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Coding Practice Platform</h1>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-badge">CP</div>
+        <div>
+          <h1>Coding Practice Platform</h1>
+          <p>Exam-ready problem sets with instant scoring</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="pill">Prep</div>
+        <div class="pill">Scoring</div>
+        <div class="pill">Secure</div>
+      </div>
+    </header>
 
-    <div class="panel">
-      <h3 style="color: #00d9ff; margin-bottom: 15px;">Select a Problem:</h3>
-      <div class="question-select" id="questionButtons"><span style="color: #888;">Loading...</span></div>
-      <div class="description" id="description">Select a question to begin</div>
-      <div class="sample-tests" id="sampleTests"></div>
+    <div class="exam-bar">
+      <div class="tabs" id="sectionTabs">
+        <button class="tab active" data-section="programming">Programming</button>
+        <button class="tab" data-section="reasoning">Reasoning</button>
+        <button class="tab" data-section="numerical">Numerical</button>
+        <button class="tab" data-section="verbal">Verbal</button>
+      </div>
+      <div class="timers">
+        <div class="timer" title="Section time remaining">
+          ⏳ <strong id="sectionTimer">30:00</strong>
+        </div>
+        <div class="timer" title="Total time remaining">
+          ⏱ <strong id="totalTimer">120:00</strong>
+        </div>
+        <div class="scoreboard">
+          <span>Scores</span>
+          <span class="score-pill" id="score-programming">P -</span>
+          <span class="score-pill" id="score-reasoning">R -</span>
+          <span class="score-pill" id="score-numerical">N -</span>
+          <span class="score-pill" id="score-verbal">V -</span>
+        </div>
+      </div>
     </div>
 
-    <div class="editor-section">
-      <div class="editor-panel panel">
+    <section class="section active" id="section-programming">
+      <div class="layout">
+        <section class="panel problem-panel">
+        <div class="problem-header">
+          <div class="problem-title">Problem</div>
+          <div class="problem-meta">Focus</div>
+        </div>
+
+        <div>
+          <div class="section-label">
+            <span class="icon">Q</span>
+            <span>Pick</span>
+          </div>
+          <select class="question-select" id="questionSelect">
+            <option>Loading...</option>
+          </select>
+        </div>
+
+        <div class="section-label">
+          <span class="icon">D</span>
+          <span>Prompt</span>
+        </div>
+        <div class="description" id="description">Select a question to begin</div>
+
+        <div class="sample-tests" id="sampleTests"></div>
+      </section>
+
+        <section class="panel workspace-panel">
         <div class="controls">
           <select id="language">
             <option value="71">Python 3</option>
@@ -151,16 +576,74 @@
             <option value="54">C++ (GCC 10)</option>
             <option value="62">Java 15</option>
           </select>
-          <input type="text" id="userId" placeholder="Your ID (optional)">
           <button class="btn btn-run" onclick="runCode()">Run</button>
           <button class="btn btn-submit" onclick="submitCode()">Submit</button>
         </div>
-        <textarea id="code" placeholder="Write your code here..."></textarea>
-      </div>
 
-      <div class="results-panel panel">
-        <h3 style="color: #00d9ff; margin-bottom: 15px;">Results</h3>
-        <div class="results" id="results">Run your code to see results</div>
+        <textarea id="code" placeholder="Write your solution here..."></textarea>
+
+        <div class="results-panel">
+          <h3>Results</h3>
+          <div class="results" id="results">Run your code to see results</div>
+        </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section" id="section-reasoning">
+      <div class="panel">
+        <div class="section-label"><span class="icon">R</span><span>Reasoning</span></div>
+        <div class="mcq-list" id="reasoningQuestions"></div>
+        <div class="mcq-actions">
+          <button class="btn btn-submit" onclick="submitSection('reasoning')">Submit Section</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section-numerical">
+      <div class="panel">
+        <div class="section-label"><span class="icon">N</span><span>Numerical</span></div>
+        <div class="mcq-list" id="numericalQuestions"></div>
+        <div class="mcq-actions">
+          <button class="btn btn-submit" onclick="submitSection('numerical')">Submit Section</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section-verbal">
+      <div class="panel">
+        <div class="section-label"><span class="icon">V</span><span>Verbal</span></div>
+        <div class="mcq-list" id="verbalQuestions"></div>
+        <div class="mcq-actions">
+          <button class="btn btn-submit" onclick="submitSection('verbal')">Submit Section</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section-summary">
+      <div class="summary-page">
+        <div class="summary-header">
+          <div>
+            <div class="problem-title">Exam Summary</div>
+            <div class="problem-meta">Review your section performance</div>
+          </div>
+          <div class="timer">Final Score</div>
+        </div>
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="summary-actions">
+          <button class="btn btn-run" onclick="resetExam()">Start Again</button>
+          <button class="btn btn-submit" onclick="goHome()">Home</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal" id="modal">
+      <div class="modal-card">
+        <div class="modal-title" id="modalTitle">Notice</div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions">
+          <button class="btn btn-run" id="modalClose">Close</button>
+        </div>
       </div>
     </div>
   </div>
@@ -173,10 +656,43 @@
 
     let questions = [];
     let currentQuestion = null;
+    const SECTION_SECONDS = 30 * 60;
+    const TOTAL_SECONDS = 120 * 60;
+    const SECTIONS = ['programming', 'reasoning', 'numerical', 'verbal'];
+    let currentSectionIndex = 0;
+    let examStart = null;
+    let examEnd = null;
+    let sectionStart = null;
+    const sectionTimeLeft = {
+      programming: SECTION_SECONDS,
+      reasoning: SECTION_SECONDS,
+      numerical: SECTION_SECONDS,
+      verbal: SECTION_SECONDS
+    };
+    let examInterval = null;
+    const sectionAnswers = {
+      reasoning: {},
+      numerical: {},
+      verbal: {}
+    };
+    const sectionSubmitted = {
+      programming: false,
+      reasoning: false,
+      numerical: false,
+      verbal: false
+    };
+    const sectionScores = {
+      programming: null,
+      reasoning: null,
+      numerical: null,
+      verbal: null
+    };
+
+    let sectionQuestions = {};
 
     async function loadQuestions() {
-      const container = document.getElementById('questionButtons');
-      container.innerHTML = '<span style="color: #00d9ff;">Loading questions...</span>';
+      const select = document.getElementById('questionSelect');
+      select.innerHTML = '<option>Loading questions...</option>';
 
       try {
         const res = await fetch(`${API_URL}/coding/questions`);
@@ -184,7 +700,7 @@
         questions = await res.json();
 
         if (questions.length === 0) {
-          container.innerHTML = '<span style="color: #ffaa00;">No questions available.</span>';
+          select.innerHTML = '<option>No questions available.</option>';
           return;
         }
 
@@ -192,7 +708,7 @@
         selectQuestion(questions[0].id);
       } catch (e) {
         console.error('Failed to load questions:', e);
-        container.innerHTML = '';
+        select.innerHTML = '';
         document.getElementById('description').innerHTML =
           `<span style="color: #ff4444;">Error loading questions: ${e.message}<br><br>
           Make sure the Scoring API is running on port 3001.<br>
@@ -201,17 +717,17 @@
     }
 
     function renderQuestionButtons() {
-      const container = document.getElementById('questionButtons');
-      container.innerHTML = questions.map(q =>
-        `<button class="question-btn" data-id="${q.id}" onclick="selectQuestion('${q.id}')">${q.title}</button>`
+      const select = document.getElementById('questionSelect');
+      select.innerHTML = questions.map(q =>
+        `<option value="${q.id}">${q.title}</option>`
       ).join('');
+      select.onchange = (e) => selectQuestion(e.target.value);
     }
 
     function selectQuestion(id) {
       currentQuestion = questions.find(q => q.id === id);
-      document.querySelectorAll('.question-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.id === id);
-      });
+      const select = document.getElementById('questionSelect');
+      if (select && select.value !== id) select.value = id;
       document.getElementById('description').innerHTML = `<h3>${currentQuestion.title}</h3><p style="margin-top:10px">${currentQuestion.description}</p>`;
 
       const testsHtml = currentQuestion.sampleTests.map((t, i) => `
@@ -221,12 +737,141 @@
           <pre>Expected: ${t.expected}</pre>
         </div>
       `).join('');
-      document.getElementById('sampleTests').innerHTML = `<h3>Sample Tests</h3>${testsHtml}`;
+      document.getElementById('sampleTests').innerHTML =
+        `<details open>
+          <summary>Sample Tests</summary>
+          ${testsHtml}
+        </details>`;
       document.getElementById('results').innerHTML = 'Run your code to see results';
     }
 
+    function startExam() {
+      examStart = Date.now();
+      sectionStart = Date.now();
+      updateTimers();
+      if (examInterval) clearInterval(examInterval);
+      examInterval = setInterval(updateTimers, 1000);
+    }
+
+    function updateTimers() {
+      if (!examStart || !sectionStart) return;
+      const now = Date.now();
+      const totalElapsed = Math.floor((now - examStart) / 1000);
+      const totalRemaining = Math.max(TOTAL_SECONDS - totalElapsed, 0);
+      const currentSection = SECTIONS[currentSectionIndex];
+      const sectionElapsed = Math.floor((now - sectionStart) / 1000);
+      const sectionRemaining = Math.max(sectionTimeLeft[currentSection] - sectionElapsed, 0);
+
+      document.getElementById('totalTimer').textContent = formatTime(totalRemaining);
+      document.getElementById('sectionTimer').textContent = formatTime(sectionRemaining);
+
+      if (totalRemaining === 0) {
+        endExam();
+      } else if (sectionRemaining === 0) {
+        autoSubmitSection(currentSection);
+      }
+    }
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function switchSection(sectionId) {
+      const index = SECTIONS.indexOf(sectionId);
+      if (index === -1) return;
+      if (index !== currentSectionIndex) return;
+      const now = Date.now();
+      const currentSection = SECTIONS[currentSectionIndex];
+      const elapsed = Math.floor((now - sectionStart) / 1000);
+      sectionTimeLeft[currentSection] = Math.max(sectionTimeLeft[currentSection] - elapsed, 0);
+      currentSectionIndex = index;
+      sectionStart = now;
+      updateTimers();
+    }
+
+    function autoSubmitSection(sectionId) {
+      if (sectionSubmitted[sectionId]) return;
+      sectionTimeLeft[sectionId] = 0;
+      if (sectionId === 'programming') {
+        submitCode({ silent: true });
+      } else {
+        submitSection(sectionId, true);
+      }
+    }
+
+    function endExam() {
+      if (examInterval) clearInterval(examInterval);
+      examEnd = Date.now();
+      document.getElementById('totalTimer').textContent = '00:00';
+      document.getElementById('sectionTimer').textContent = '00:00';
+      SECTIONS.forEach(sectionId => {
+        if (sectionSubmitted[sectionId]) return;
+        if (sectionId === 'programming') {
+          submitCode({ silent: true, noAdvance: true });
+        } else {
+          submitSection(sectionId, true, true);
+        }
+      });
+      document.querySelectorAll('input, textarea, select, button').forEach(el => {
+        if (['modalClose'].includes(el.id)) return;
+        if (!el.id || !['sectionTabs'].includes(el.id)) el.disabled = true;
+      });
+      hideModal();
+      showSummaryPage();
+    }
+
+    function renderMCQ(sectionId, containerId) {
+      const container = document.getElementById(containerId);
+      const questions = sectionQuestions[sectionId] || [];
+      container.innerHTML = questions.map((q, idx) => {
+        const opts = q.options.map((opt, i) => `
+          <label>
+            <input type="radio" name="${sectionId}-${q.id}" value="${i + 1}">
+            ${opt}
+          </label>
+        `).join('');
+        return `
+          <div class="mcq-card">
+            <div class="mcq-q">${idx + 1}. ${q.q}</div>
+            <div class="mcq-options">${opts}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function submitSection(sectionId, silent = false, noAdvance = false) {
+      if (sectionSubmitted[sectionId]) return;
+      const questions = sectionQuestions[sectionId] || [];
+      questions.forEach(q => {
+        const selected = document.querySelector(`input[name="${sectionId}-${q.id}"]:checked`);
+        sectionAnswers[sectionId][q.id] = selected ? parseInt(selected.value) : null;
+      });
+      sectionSubmitted[sectionId] = true;
+      const inputs = document.querySelectorAll(`#section-${sectionId} input[type="radio"]`);
+      inputs.forEach(input => { input.disabled = true; });
+
+      fetch(`${API_URL}/exam/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sectionId, answers: sectionAnswers[sectionId], userId: 'anonymous' })
+      })
+        .then(res => res.json())
+        .then(data => {
+          updateScoreBoard(sectionId, data.score);
+          sectionScores[sectionId] = data.score;
+          const isFinal = sectionId === SECTIONS[SECTIONS.length - 1];
+          if (!silent && !isFinal) showModal('Section Submitted', `${sectionId} section submitted. Score: ${data.score}%.`);
+          if (!noAdvance) advanceSection(sectionId);
+        })
+        .catch(() => {
+          if (!silent) showModal('Submission Error', 'Failed to submit section. Please try again.');
+        });
+    }
+
     async function runCode() {
-      if (!currentQuestion) return alert('Select a question first');
+      if (!currentQuestion) return showModal('Select a Question', 'Please choose a programming question before running.');
       const code = document.getElementById('code').value;
       const languageId = parseInt(document.getElementById('language').value);
 
@@ -245,11 +890,17 @@
       }
     }
 
-    async function submitCode() {
-      if (!currentQuestion) return alert('Select a question first');
+    async function submitCode(options = {}) {
+      const { silent = false, noAdvance = false } = options;
+      if (!currentQuestion) {
+        if (!silent) showModal('Select a Question', 'Please choose a programming question before submitting.');
+        return;
+      }
+      if (sectionSubmitted.programming) return;
+      sectionSubmitted.programming = true;
       const code = document.getElementById('code').value;
       const languageId = parseInt(document.getElementById('language').value);
-      const userId = document.getElementById('userId').value || 'anonymous';
+      const userId = 'anonymous';
 
       document.getElementById('results').innerHTML = '<div class="loading">Submitting and grading...</div>';
 
@@ -261,9 +912,23 @@
         });
         const data = await res.json();
         renderScore(data);
+        updateScoreBoard('programming', data.score);
+        sectionScores.programming = data.score;
+        if (!noAdvance) advanceSection('programming');
       } catch (e) {
         document.getElementById('results').innerHTML = `<span style="color: #ff4444;">Error: ${e.message}</span>`;
       }
+    }
+
+    function showModal(title, body) {
+      const modal = document.getElementById('modal');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').textContent = body;
+      modal.classList.add('active');
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.remove('active');
     }
 
     function renderResults(testResults) {
@@ -290,7 +955,115 @@
       `;
     }
 
+    function advanceSection(sectionId) {
+      const index = SECTIONS.indexOf(sectionId);
+      if (index === -1) return;
+      if (index < SECTIONS.length - 1) {
+        currentSectionIndex = index + 1;
+        sectionStart = Date.now();
+        updateSectionVisibility();
+      } else {
+        endExam();
+      }
+    }
+
+    function updateSectionVisibility() {
+      const currentSection = SECTIONS[currentSectionIndex];
+      document.querySelectorAll('.section').forEach(el => {
+        el.classList.toggle('active', el.id === `section-${currentSection}`);
+      });
+      document.querySelectorAll('.tab').forEach(tab => {
+        const isActive = tab.dataset.section === currentSection;
+        tab.classList.toggle('active', isActive);
+        tab.classList.toggle('locked', !isActive);
+      });
+      updateTimers();
+    }
+
+    function updateScoreBoard(sectionId, score) {
+      const el = document.getElementById(`score-${sectionId}`);
+      if (el) el.textContent = `${sectionId[0].toUpperCase()} ${score}`;
+    }
+
+    function showSummaryPage() {
+      document.querySelectorAll('.section').forEach(el => {
+        el.classList.toggle('active', el.id === 'section-summary');
+      });
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.classList.add('locked');
+      });
+      const grid = document.getElementById('summaryGrid');
+      const cards = SECTIONS.map(id => {
+        const score = sectionScores[id];
+        const label = id[0].toUpperCase() + id.slice(1);
+        return `
+          <div class="summary-card">
+            <strong>${label}</strong><br>
+            Score: ${score !== null ? score + '%' : '—'}
+          </div>
+        `;
+      }).join('');
+      const totalScores = SECTIONS.map(id => sectionScores[id]).filter(v => typeof v === 'number');
+      const sumScore = totalScores.length ? totalScores.reduce((a, b) => a + b, 0) : null;
+      const elapsedSeconds = Math.floor(((examEnd || Date.now()) - (examStart || Date.now())) / 1000);
+      const timeTaken = formatTime(elapsedSeconds);
+      grid.innerHTML = `
+        ${cards}
+        <div class="summary-card">
+          <strong>Overall</strong><br>
+          Total Score: ${sumScore !== null ? sumScore : '—'} / 400
+        </div>
+        <div class="summary-card">
+          <strong>Time Taken</strong><br>
+          ${timeTaken}
+        </div>
+      `;
+      document.querySelector('#section-summary .summary-page').classList.add('active');
+    }
+
+    function resetExam() {
+      window.location.reload();
+    }
+
+    function goHome() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      resetExam();
+    }
+
+    async function initSections() {
+      try {
+        const res = await fetch(`${API_URL}/exam/sections`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : data.sections;
+        sectionQuestions = (list || []).reduce((acc, section) => {
+          acc[section.id] = section.questions;
+          return acc;
+        }, {});
+        renderMCQ('reasoning', 'reasoningQuestions');
+        renderMCQ('numerical', 'numericalQuestions');
+        renderMCQ('verbal', 'verbalQuestions');
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.addEventListener('click', () => switchSection(tab.dataset.section));
+        });
+        updateSectionVisibility();
+      } catch (e) {
+        console.error('Failed to load sections:', e);
+        ['reasoningQuestions', 'numericalQuestions', 'verbalQuestions'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = '<div class="mcq-q" style="color:#94a3b8;">Failed to load questions.</div>';
+        });
+      }
+    }
+
     loadQuestions();
+    initSections();
+    startExam();
+    document.getElementById('modalClose').addEventListener('click', hideModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') hideModal();
+    });
   </script>
 </body>
 </html>

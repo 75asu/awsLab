@@ -11,21 +11,19 @@ start-piston:
 
 start-api:
 	@echo "[2/3] Starting Scoring API..."
-	@pkill -f "node src/server.js" 2>/dev/null || true
-	@cd scoring-api && PISTON_URL=http://localhost:2000 nohup npm start > /tmp/scoring-api.log 2>&1 &
+	@cd scoring-api && HOST=127.0.0.1 PISTON_URL=http://localhost:2000 nohup npm start > /tmp/scoring-api.log 2>&1 & echo $$! > /tmp/scoring-api.pid
 	@sleep 2
 
 start-frontend:
 	@echo "[3/3] Starting Frontend..."
-	@lsof -ti :3000 | xargs kill -9 2>/dev/null || true
-	@cd frontend && nohup python3 -m http.server 3000 > /tmp/frontend.log 2>&1 &
+	@cd frontend && nohup python3 -m http.server 3000 > /tmp/frontend.log 2>&1 & echo $$! > /tmp/frontend.pid
 	@sleep 1
 
 # Stop all services
 stop:
 	@echo "Stopping services..."
-	@pkill -f "node src/server.js" 2>/dev/null || true
-	@lsof -ti :3000 | xargs kill -9 2>/dev/null || true
+	@if [ -f /tmp/scoring-api.pid ]; then kill $$(cat /tmp/scoring-api.pid) 2>/dev/null || true; rm -f /tmp/scoring-api.pid; fi
+	@if [ -f /tmp/frontend.pid ]; then kill $$(cat /tmp/frontend.pid) 2>/dev/null || true; rm -f /tmp/frontend.pid; fi
 	@cd piston-setup && docker compose down 2>/dev/null || true
 	@echo "✓ Stopped"
 

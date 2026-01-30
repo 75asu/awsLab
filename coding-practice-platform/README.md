@@ -124,3 +124,10 @@ curl http://localhost:2000/api/v2/runtimes
 
 
 
+ okay, check the setup in this folder - coding-practice-platform/frontend and overall check the coding practice platform
+  directory to understand what we are trying to do, so the project is running now and I can see it working, but the UI is pretty
+  ugly, since we are trying to set this up for exams for students, more context about this will be there in the readme - coding-
+  practice-platform/README.md, so lets revamp the UI and make it better, we are looking somewhat in the direction of leetcode ui
+
+
+ssh -L 1455:localhost:1455 phoenix-admin@100.64.11.64
